@@ -17,6 +17,25 @@ var ddToDms = function (coordinate, posSymbol, negSymbol) {
   return pad(d) + '&deg; ' + pad(m) + '\' ' + pad(s) + '" ' + directionSymbol;
 };
 
+var ddtoMga = function (last) {
+    var zone55 = "+proj=utm +zone=55 +south +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs ";
+    var zone56 = "+proj=utm +zone=56 +south +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs ";
+    var zone54 = "+proj=utm +zone=54 +south +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs ";
+    epsg = null;
+    if (zone(last) == 55) {
+        epsg = zone55;
+    }
+    if (zone(last) == 56) {
+        epsg = zone56;
+    }
+    if (zone(last) == 54) {
+        epsg = zone54;
+    }
+    return proj4(epsg, [last.lng, last.lat]);
+};
+
+var zone=function(latlng){return 1+Math.floor((latlng.lng+180)/6)};
+
 var measure = function (latlngs) {
   var last = _.last(latlngs);
   var path = geocrunch.path(_.map(latlngs, function (latlng) {
@@ -39,7 +58,11 @@ var measure = function (latlngs) {
       dms: {
         x: ddToDms(last.lng, 'E', 'W'),
         y: ddToDms(last.lat, 'N', 'S')
-      }
+      },
+      mga:{
+        zone:zone(last),
+        easting:ddtoMga(last)[0],
+        northing:ddtoMga(last)[1]}
     },
     length: meters,
     area: sqMeters
