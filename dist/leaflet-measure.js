@@ -6269,10 +6269,12 @@ sprintf.vsprintf = vsprintf;
 
 },{}],23:[function(require,module,exports){
 // calc.js
+
 // measure calculations
 
 var _ = require('underscore');
 var geocrunch = require('geocrunch');
+var proj4=require("proj4")
 
 var pad = function (num) {
   return num < 10 ? '0' + num.toString() : num.toString();
